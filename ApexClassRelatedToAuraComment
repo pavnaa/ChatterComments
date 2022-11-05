@@ -1,0 +1,63 @@
+public without sharing class DisplayChatterQuestionInCommunity {
+    
+    public DisplayChatterQuestionInCommunity() {
+        
+    } 
+    
+    @AuraEnabled(cacheable=true)
+    public Static List<CollaborationGroupFeed> DisplayChatterQuestionIn() 
+    {
+        Set<Id> CollaborationGroupIds= New Set<ID>();
+        List<CollaborationGroupFeed>CollaborationGroupFeedRecords = New List<CollaborationGroupFeed>();
+        List<CollaborationGroupMember> collGroupMemberList = New List<CollaborationGroupMember>();
+        collGroupMemberList = [SELECT Id,CollaborationGroupId FROM CollaborationGroupMember WHERE MemberId= :UserInfo.getUserId() And CollaborationGroup.IsArchived = false];
+        System.debug('collGroupMemberList1'+collGroupMemberList.size());
+        System.debug('collGroupMemberList2'+collGroupMemberList);
+        
+        IF(collGroupMemberList.Size()>0 && collGroupMemberList !=Null)
+        {
+            For(CollaborationGroupMember CollaborationGroupMemberrecord : collGroupMemberList)
+            {
+                CollaborationGroupIds.Add(CollaborationGroupMemberrecord.CollaborationGroupId);
+            }
+        }
+        System.debug('CollaborationGroupIds'+CollaborationGroupIds.size());
+        System.debug('CollaborationGroupIds'+CollaborationGroupIds);
+        
+        If(CollaborationGroupIds != Null && CollaborationGroupIds.Size()>0)
+        {
+            CollaborationGroupFeedRecords =  [SELECT Id, ParentId, Type, Title, Body, NetworkScope, Visibility FROM CollaborationGroupFeed where type='QuestionPost'AND ParentId In : CollaborationGroupIds];
+        }
+        
+        System.debug('CollaborationGroupFeedRecords1'+CollaborationGroupFeedRecords.size());
+        System.debug('CollaborationGroupFeedRecords2'+CollaborationGroupFeedRecords);
+        
+        IF(CollaborationGroupFeedRecords.Size()>0 && CollaborationGroupFeedRecords != Null)
+        {
+            Return CollaborationGroupFeedRecords;
+        }
+        Else
+        {
+            Return Null;
+        }
+    }
+    
+    @AuraEnabled(cacheable=true)
+    public Static List<FeedComment> DisplayChatterCommentsAnswers(Id parentRecordID) 
+    {
+        Set<Id> CollaborationGroupIds= New Set<ID>();
+        List<FeedComment>feedCommentQueriedRecords = New List<FeedComment>();
+       
+       feedCommentQueriedRecords = [SELECT Id, Status, CommentBody, FeedItemId, ParentId FROM FeedComment where FeedItemId = :parentRecordID];
+        System.debug('feedCommentQueriedRecords'+feedCommentQueriedRecords.size());        
+        
+        IF(feedCommentQueriedRecords.Size()>0 && feedCommentQueriedRecords != Null)
+        {
+            Return feedCommentQueriedRecords;
+        }
+        Else
+        {
+            Return Null;
+        }
+    }
+}
