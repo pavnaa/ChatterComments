@@ -1,0 +1,103 @@
+({
+    getCommunityQuestionRecords : function(component, event, helper) {
+        component.set('v.mycolumns', [
+            {label: 'TITLE', fieldName: 'Title', type: 'text'},
+            {label: 'Body', fieldName: 'Body', type: 'text'},
+            {type: "button", typeAttributes: {
+                label: 'View Details',
+                name: 'View_Details',
+                title: 'Click to View Details',
+                disabled: false,
+                value: 'view',
+                iconPosition: 'left'
+            }}
+        ]);
+        var action = component.get("c.DisplayChatterQuestionIn");
+        action.setParams({
+        });
+        action.setCallback(this, function(response){
+            var state = response.getState();
+            console.log('statestate'+JSON.stringify(state));
+            if (state === "SUCCESS") {
+                var returnedValue = response.getReturnValue();
+                console.log('ffffffff'+JSON.stringify(returnedValue));
+                if(returnedValue == null)
+                {    console.log('Nulllllllll');
+                 component.set("v.displayModal", true);    
+                }
+                else
+                {    console.log('NotNulllllllll');
+                 component.set("v.hideModal",true); 
+                 component.set("v.collaborationGroupFeedList", response.getReturnValue());   
+                }
+                
+            }
+            else
+            {
+                var errors = response.getError();
+                if (errors) {
+                    if (errors[0] && errors[0].message) {
+                        // log the error passed in to AuraHandledException
+                        console.log("Error message: " + 
+                                    errors[0].message);
+                    }
+                } 
+            }
+        });
+        $A.enqueueAction(action);
+    },
+    
+    getCommunityCommentRecords : function(component, event, helper) {
+       console.log("getCommunityCommentRecords");
+        component.set('v.commentcolumns', [
+            {label: 'Comment', fieldName: 'CommentBody', type: 'text'},
+            
+        ]);
+            var questionRecprdId;
+            var action = event.getParam('action');
+            var row = event.getParam('row');
+        switch (action.name) {
+            case 'View_Details':
+           questionRecprdId  =  row.Id;
+            console.log('questionRecprdId'+questionRecprdId); 
+                break;
+            }
+            var action = component.get("c.DisplayChatterCommentsAnswers");
+            
+            action.setParams({
+            "parentRecordID" : questionRecprdId
+            });
+            action.setCallback(this, function(response){
+            var state = response.getState();
+            console.log('statestate'+JSON.stringify(state));
+            if (state === "SUCCESS") {
+            component.set("v.hideModal", false); 
+            component.set("v.showCommentsModal", true);    
+            var returnedValue = response.getReturnValue();
+            console.log('ffffffff'+JSON.stringify(returnedValue));
+            if(returnedValue == null)
+            {    component.set("v.displayCommentModal", true);    
+                 component.set("v.showCommentsModal", false);    
+            // component.set("v.displayModal", true);    
+            }
+            else
+            {     console.log('MotNulllllllll');
+            component.set("v.collaborationGroupCommentList", response.getReturnValue());   
+            }
+            
+            }
+            else
+            {
+            var errors = response.getError();
+            if (errors) {
+            if (errors[0] && errors[0].message) {
+            // log the error passed in to AuraHandledException
+            console.log("Error message: " + 
+                        errors[0].message);
+        }
+    } 
+}
+ });
+$A.enqueueAction(action);
+}
+})
