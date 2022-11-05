@@ -1,0 +1,12 @@
+({
+	doInit : function(component, event, helper) 
+    {
+		helper.getCommunityQuestionRecords(component, event, helper);
+	},
+    
+    getSelectedName : function(component, event, helper) 
+    {
+		console.log("getSelectedNameworkimg");
+        helper.getCommunityCommentRecords(component, event, helper);
+	}
+})
