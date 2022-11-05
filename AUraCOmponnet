@@ -1,0 +1,37 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" controller="DisplayChatterQuestionInCommunity" access="global" >
+    <aura:attribute name="collaborationGroupFeedList" type="CollaborationGroupFeed[]" />
+    <aura:attribute name="mycolumns" type="List" />
+    <aura:attribute name="collaborationGroupCommentList" type="FeedComment[]" />
+    <aura:attribute name="commentcolumns" type="List" />
+    <aura:attribute name="displayModal" type="boolean" default="false" />
+     <aura:attribute name="displayCommentModal" type="boolean" default="false" />
+    <aura:attribute name="hideModal" type="boolean" default="false" />
+     <aura:attribute name="showCommentsModal" type="boolean" default="false" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    
+    <aura:if isTrue="{!v.displayModal}">  
+        You dont have any active casegroups
+    </aura:if>  
+    
+    <aura:if isTrue="{!v.displayModal}">  
+        You dont have any active casegroups
+    </aura:if>
+    
+    <aura:if isTrue="{!v.hideModal}">  
+        <lightning:datatable data="{! v.collaborationGroupFeedList }" 
+                             columns="{! v.mycolumns }" 
+                             keyField="Id" 
+                             hideCheckboxColumn="true"
+                             onrowaction ="{! c.getSelectedName }"/>
+       
+    </aura:if> 
+    <aura:if isTrue="{!v.showCommentsModal}">  
+            <lightning:datatable data="{! v.collaborationGroupCommentList }" 
+                                 columns="{! v.commentcolumns}" 
+                                 keyField="Id" 
+                                 hideCheckboxColumn="true"
+                                 />
+        </aura:if>  
+</aura:component>
